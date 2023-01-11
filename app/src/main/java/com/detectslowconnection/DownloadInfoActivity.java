@@ -10,16 +10,17 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class DownloadInfoActivity extends AppCompatActivity {
 
     private final OkHttpClient client = new OkHttpClient();
     private String msg = this.getClass().getSimpleName();
+    private long startTime;
+    private long endTime;
+    private double  minimumSecs = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class DownloadInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download_info);
 
 
+        downloadInfo();  // call downloadInfo to perform the download request
     }
 
     private void downloadInfo(){
@@ -34,6 +36,8 @@ public class DownloadInfoActivity extends AppCompatActivity {
         Request request = new Request.Builder()
                 .url("IMAGE_URL_HERE")
                 .build();
+
+        startTime = System.currentTimeMillis();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -50,23 +54,36 @@ public class DownloadInfoActivity extends AppCompatActivity {
                     Log.d(msg, responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
 
-                InputStream in = response.body().byteStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                InputStream input = response.body().byteStream();
+                long fileLength;
 
-//                String result, line = reader.readLine();
-//                result = line;
-//                while((line = reader.readLine()) != null) {
-//                    result += line;
-//                }
-//                System.out.println(result);
+                try {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
 
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                while (reader.read() != -1) {
-                    bos.write(buffer);
+                    while (input.read(buffer) != -1) {
+                        bos.write(buffer);
+                    }
+                    byte[] docBuffer = bos.toByteArray();
+                    fileLength = docBuffer.length;
+
+                } finally {
+                    input.close();
                 }
-                byte[] docbuffer = bos.toByteArray();
-                int fileLength = docbuffer.length;
+
+                endTime = System.currentTimeMillis();
+
+                // calculate how long it took by subtracting endtime from starttime
+
+                double timeTakenInSecs = Math.floor(endTime - startTime) / 1000;  // divide by 1000 to get speed in seconds
+                double kilobytePerSec = Math.round(1024 / timeTakenInSecs);
+
+                if(timeTakenInSecs > minimumSecs){
+                    // slow connection
+                }
+
+                Log.d(msg, "Time taken in secs " + timeTakenInSecs);
+                Log.d(msg, "kilobyte per sec " + kilobytePerSec);
 
 
             }
