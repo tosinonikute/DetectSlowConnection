@@ -23,7 +23,7 @@ public class FacebookConnectActivity extends AppCompatActivity {
     private DeviceBandwidthSampler mDeviceBandwidthSampler;
     private ConnectionChangedListener mListener;
     private int mTries = 0;
-    private String msg = this.getClass().getSimpleName();
+    private String TAG = this.getClass().getSimpleName();
 
 
     @Override
@@ -63,11 +63,11 @@ public class FacebookConnectActivity extends AppCompatActivity {
 
                 Headers responseHeaders = response.headers();
                 for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                    Log.d(msg, responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    Log.d(TAG, responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
 
-                Log.d(msg, response.body().string());
-                Log.d(msg, mConnectionClassManager.getCurrentBandwidthQuality().toString());
+                Log.d(TAG, response.body().string());
+                Log.d(TAG, mConnectionClassManager.getCurrentBandwidthQuality().toString());
 
                 mDeviceBandwidthSampler.stopSampling();
             }

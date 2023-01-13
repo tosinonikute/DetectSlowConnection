@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 public class NetworkInfoActivity extends AppCompatActivity {
 
     private boolean connectionStatus;
+    private String TAG = this.getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

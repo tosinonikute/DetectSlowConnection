@@ -17,7 +17,7 @@ import java.io.InputStream;
 public class DownloadInfoActivity extends AppCompatActivity {
 
     private final OkHttpClient client = new OkHttpClient();
-    private String msg = this.getClass().getSimpleName();
+    private String TAG = this.getClass().getSimpleName();
     private long startTime;
     private long endTime;
     private double  minimumSecs = 4;
@@ -51,7 +51,7 @@ public class DownloadInfoActivity extends AppCompatActivity {
 
                 Headers responseHeaders = response.headers();
                 for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                    Log.d(msg, responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    Log.d(TAG, responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
 
                 InputStream input = response.body().byteStream();
@@ -82,8 +82,8 @@ public class DownloadInfoActivity extends AppCompatActivity {
                     // slow connection
                 }
 
-                Log.d(msg, "Time taken in secs " + timeTakenInSecs);
-                Log.d(msg, "kilobyte per sec " + kilobytePerSec);
+                Log.d(TAG, "Time taken in secs " + timeTakenInSecs);
+                Log.d(TAG, "kilobyte per sec " + kilobytePerSec);
 
 
             }
