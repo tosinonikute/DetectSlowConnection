@@ -1,8 +1,12 @@
 package com.detectslowconnection;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.network.connectionclass.ConnectionClassManager;
 import com.facebook.network.connectionclass.ConnectionQuality;
@@ -22,7 +26,11 @@ public class FacebookConnectActivity extends AppCompatActivity {
     private ConnectionClassManager mConnectionClassManager;
     private DeviceBandwidthSampler mDeviceBandwidthSampler;
     private ConnectionChangedListener mListener;
+
     private int mTries = 0;
+    private TextView mTextView;
+    private View mRunningBar;
+
     private String TAG = this.getClass().getSimpleName();
 
 
@@ -30,11 +38,12 @@ public class FacebookConnectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_connect);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mConnectionClassManager = ConnectionClassManager.getInstance();
         mDeviceBandwidthSampler = DeviceBandwidthSampler.getInstance();
 
-        checkNetworkQuality();
+        findViewById(R.id.test_btn).setOnClickListener(testButtonClicked);
 
     }
 
@@ -55,6 +64,9 @@ public class FacebookConnectActivity extends AppCompatActivity {
                     mTries++;
                     checkNetworkQuality();
                 }
+                if (!mDeviceBandwidthSampler.isSampling()) {
+                    mRunningBar.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -73,6 +85,12 @@ public class FacebookConnectActivity extends AppCompatActivity {
             }
         });
 
+
+
+        mTextView = (TextView)findViewById(R.id.connection_class);
+        mTextView.setText(mConnectionClassManager.getCurrentBandwidthQuality().toString());
+        mRunningBar = findViewById(R.id.runningBar);
+        mRunningBar.setVisibility(View.GONE);
 
         mListener = new ConnectionChangedListener();
     }
@@ -103,9 +121,35 @@ public class FacebookConnectActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     // do something
+                    mTextView.setText(mConnectionClass.toString());
                 }
             });
         }
+    }
+
+    private final View.OnClickListener testButtonClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            checkNetworkQuality();
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

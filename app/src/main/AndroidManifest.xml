@@ -22,7 +22,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".NetworkInfoActivity" />
-        <!--<activity android:name=".DownloadInfoActivity"></activity>-->
+        <activity android:name=".DownloadInfoActivity" />
+        <activity android:name=".FacebookConnectActivity"/>
+
     </application>
 
 </manifest>

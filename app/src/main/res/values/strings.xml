@@ -3,4 +3,5 @@
     <string name="network_test">Network Test</string>
     <string name="download_file_test">Download File Test</string>
     <string name="facebook_connection_test">Facebook Connection Test</string>
+    <string name="connection_class">Your connection class is:</string>
 </resources>

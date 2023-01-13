@@ -13,23 +13,12 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/test_network_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
             android:text="Network Test" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Download File Test"
-            android:padding="20dp"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Facebook Connection"
-            android:padding="20dp"/>
 
 
 

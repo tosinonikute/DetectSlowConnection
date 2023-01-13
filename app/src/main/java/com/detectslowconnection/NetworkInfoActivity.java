@@ -1,28 +1,29 @@
 package com.detectslowconnection;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.MenuItem;
+import android.view.View;
 
 public class NetworkInfoActivity extends AppCompatActivity {
 
     private boolean connectionStatus;
     private String TAG = this.getClass().getSimpleName();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network_info);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        connectionStatus = isConnectedFast(getApplicationContext());
-        if(!connectionStatus){
+        findViewById(R.id.test_network_btn).setOnClickListener(testButtonClicked);
 
-        } else {
-
-        }
     }
 
     private boolean isConnectedFast(Context context){
@@ -79,8 +80,44 @@ public class NetworkInfoActivity extends AppCompatActivity {
         }
     }
 
+    private void checkNetworkType(){
+
+        connectionStatus = isConnectedFast(getApplicationContext());
+        if(!connectionStatus){
+
+        } else {
+
+        }
+
+    }
+
     private NetworkInfo getNetworkInfo(Context context){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
+    }
+
+    private final View.OnClickListener testButtonClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            checkNetworkType();
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
