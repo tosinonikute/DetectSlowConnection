@@ -1,6 +1,8 @@
 package com.detectslowconnection;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,6 +25,7 @@ public class DownloadInfoActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
     private long startTime;
     private long endTime;
+    private long fileSize;
     private double  minimumSecs = 4;
 
     @Override
@@ -39,7 +42,7 @@ public class DownloadInfoActivity extends AppCompatActivity {
     private void downloadInfo(){
 
         Request request = new Request.Builder()
-                .url("IMAGE_URL_HERE")
+                .url("URL_HERE")
                 .build();
 
         startTime = System.currentTimeMillis();
@@ -60,7 +63,6 @@ public class DownloadInfoActivity extends AppCompatActivity {
                 }
 
                 InputStream input = response.body().byteStream();
-                long fileLength;
 
                 try {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -70,7 +72,7 @@ public class DownloadInfoActivity extends AppCompatActivity {
                         bos.write(buffer);
                     }
                     byte[] docBuffer = bos.toByteArray();
-                    fileLength = docBuffer.length;
+                    fileSize = bos.size();
 
                 } finally {
                     input.close();
@@ -78,17 +80,24 @@ public class DownloadInfoActivity extends AppCompatActivity {
 
                 endTime = System.currentTimeMillis();
 
+
                 // calculate how long it took by subtracting endtime from starttime
 
-                double timeTakenInSecs = Math.floor(endTime - startTime) / 1000;  // divide by 1000 to get speed in seconds
+                double timeTakenMills = Math.floor(endTime - startTime);  // time taken in milliseconds
+                double timeTakenInSecs = timeTakenMills / 1000;  // divide by 1000 to get time in seconds
                 double kilobytePerSec = Math.round(1024 / timeTakenInSecs);
 
                 if(timeTakenInSecs > minimumSecs){
                     // slow connection
                 }
 
-                Log.d(TAG, "Time taken in secs " + timeTakenInSecs);
-                Log.d(TAG, "kilobyte per sec " + kilobytePerSec);
+                // get the download speed by dividing the file size by time taken to download
+                double speed = fileSize / timeTakenMills;
+
+                Log.d(TAG, "Time taken in secs: " + timeTakenInSecs);
+                Log.d(TAG, "kilobyte per sec: " + kilobytePerSec);
+                Log.d(TAG, "Download Speed: " + speed);
+                Log.d(TAG, "File size: " + fileSize);
 
 
             }
@@ -98,7 +107,15 @@ public class DownloadInfoActivity extends AppCompatActivity {
     private final View.OnClickListener testButtonClicked = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            downloadInfo();  // call downloadInfo to perform the download request
+
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if(cm.getActiveNetworkInfo().isConnected()) {
+
+                downloadInfo();  // call downloadInfo to perform the download request
+
+            } else {
+                // display snack bar message
+            }
         }
     };
 
