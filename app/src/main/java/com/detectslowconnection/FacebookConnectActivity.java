@@ -1,11 +1,16 @@
 package com.detectslowconnection;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.network.connectionclass.ConnectionClassManager;
@@ -44,6 +49,7 @@ public class FacebookConnectActivity extends AppCompatActivity {
         mDeviceBandwidthSampler = DeviceBandwidthSampler.getInstance();
 
         findViewById(R.id.test_btn).setOnClickListener(testButtonClicked);
+        mRunningBar = findViewById(R.id.runningBar);
 
     }
 
@@ -53,6 +59,7 @@ public class FacebookConnectActivity extends AppCompatActivity {
                 .url("IMAGE_URL_HERE")
                 .build();
 
+        mRunningBar.setVisibility(View.VISIBLE);
         mDeviceBandwidthSampler.startSampling();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -130,7 +137,22 @@ public class FacebookConnectActivity extends AppCompatActivity {
     private final View.OnClickListener testButtonClicked = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            checkNetworkQuality();
+
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if(cm.getActiveNetworkInfo() != null  && cm.getActiveNetworkInfo().isConnected()){
+
+                checkNetworkQuality(); // call downloadInfo to perform the download request
+
+            } else {
+
+                // display snack bar message
+                String msg = getResources().getString(R.string.connection_error);
+                Snackbar snack = Snackbar.make(v, msg, Snackbar.LENGTH_LONG).setAction("Action", null);
+                ViewGroup group = (ViewGroup) snack.getView();
+                group.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                snack.show();
+
+            }
         }
     };
 

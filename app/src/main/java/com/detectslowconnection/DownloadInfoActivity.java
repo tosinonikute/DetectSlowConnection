@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;
@@ -27,6 +31,8 @@ public class DownloadInfoActivity extends AppCompatActivity {
     private long endTime;
     private long fileSize;
     private double  minimumSecs = 4;
+    private View mRunningBar;
+    private TextView timeTaken, kbPerSec, downloadSpeed, fSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +41,21 @@ public class DownloadInfoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewById(R.id.test_download_btn).setOnClickListener(testButtonClicked);
-
+        mRunningBar = findViewById(R.id.download_running_bar);
+        timeTaken = (TextView) findViewById(R.id.time_taken);
+        kbPerSec = (TextView) findViewById(R.id.kilobyte_per_sec);
+        downloadSpeed = (TextView) findViewById(R.id.download_speed);
+        fSize = (TextView) findViewById(R.id.file_size);
 
     }
 
     private void downloadInfo(){
 
         Request request = new Request.Builder()
-                .url("URL_HERE")
+                .url("IMAGE_URL_HERE")
                 .build();
 
+        mRunningBar.setVisibility(View.VISIBLE);
         startTime = System.currentTimeMillis();
 
         client.newCall(request).enqueue(new Callback() {
@@ -80,28 +91,44 @@ public class DownloadInfoActivity extends AppCompatActivity {
 
                 endTime = System.currentTimeMillis();
 
-
                 // calculate how long it took by subtracting endtime from starttime
 
-                double timeTakenMills = Math.floor(endTime - startTime);  // time taken in milliseconds
-                double timeTakenInSecs = timeTakenMills / 1000;  // divide by 1000 to get time in seconds
-                double kilobytePerSec = Math.round(1024 / timeTakenInSecs);
+                final double timeTakenMills = Math.floor(endTime - startTime);  // time taken in milliseconds
+                final double timeTakenInSecs = timeTakenMills / 1000;  // divide by 1000 to get time in seconds
+                final double kilobytePerSec = Math.round(1024 / timeTakenInSecs);
 
                 if(timeTakenInSecs > minimumSecs){
                     // slow connection
                 }
 
                 // get the download speed by dividing the file size by time taken to download
-                double speed = fileSize / timeTakenMills;
+                final double speed = Math.round(fileSize / timeTakenMills);
 
                 Log.d(TAG, "Time taken in secs: " + timeTakenInSecs);
-                Log.d(TAG, "kilobyte per sec: " + kilobytePerSec);
+                Log.d(TAG, "Kb per sec: " + kilobytePerSec);
                 Log.d(TAG, "Download Speed: " + speed);
-                Log.d(TAG, "File size: " + fileSize);
+                Log.d(TAG, "File size in kb: " + fileSize);
+
+
+                // update the UI with the speed test results
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timeTaken.setText(getResources().getString(R.string.time_taken) + " " + String.valueOf(timeTakenInSecs));
+                        kbPerSec.setText(getResources().getString(R.string.kilobyte_per_sec) + " " + String.valueOf(kilobytePerSec));
+                        downloadSpeed.setText(getResources().getString(R.string.download_speed) + " " + String.valueOf(speed));
+                        fSize.setText(getResources().getString(R.string.file_size) + " " + String.valueOf(fileSize));
+                        mRunningBar.setVisibility(View.GONE);
+                    }
+                });
+
 
 
             }
         });
+
+
+
     }
 
     private final View.OnClickListener testButtonClicked = new View.OnClickListener() {
@@ -114,7 +141,13 @@ public class DownloadInfoActivity extends AppCompatActivity {
                 downloadInfo();  // call downloadInfo to perform the download request
 
             } else {
+
                 // display snack bar message
+                String msg = getResources().getString(R.string.connection_error);
+                Snackbar snack = Snackbar.make(v, msg, Snackbar.LENGTH_LONG).setAction("Action", null);
+                ViewGroup group = (ViewGroup) snack.getView();
+                group.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.error));
+                snack.show();
             }
         }
     };

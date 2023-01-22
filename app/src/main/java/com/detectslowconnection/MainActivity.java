@@ -52,4 +52,9 @@ public class MainActivity extends AppCompatActivity implements android.view.View
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 }

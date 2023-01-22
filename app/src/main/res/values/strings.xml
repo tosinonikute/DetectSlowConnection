@@ -4,4 +4,12 @@
     <string name="download_file_test">Download File Test</string>
     <string name="facebook_connection_test">Facebook Connection Test</string>
     <string name="connection_class">Your connection class is:</string>
+    <string name="connection_error">No network connection! </string>
+
+    <string name="time_taken">Time taken in secs:</string>
+    <string name="kilobyte_per_sec">Kb per sec:</string>
+    <string name="download_speed">Download Speed:</string>
+    <string name="file_size">File size in kb:</string>
+    <string name="fast_connection">FAST</string>
+    <string name="slow_connection">SLOW</string>
 </resources>

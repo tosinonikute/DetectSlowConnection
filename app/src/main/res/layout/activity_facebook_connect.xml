@@ -9,6 +9,7 @@
     <Button android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/test_btn"
+        android:padding="20dp"
         android:text="@string/facebook_connection_test"
         android:layout_marginBottom="10dp"/>
 

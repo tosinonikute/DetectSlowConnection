@@ -9,12 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 public class NetworkInfoActivity extends AppCompatActivity {
 
     private boolean connectionStatus;
     private String TAG = this.getClass().getSimpleName();
-
+    private TextView networkType;
+    private TextView networkSubType;
+    private TextView connectStat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,7 @@ public class NetworkInfoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewById(R.id.test_network_btn).setOnClickListener(testButtonClicked);
+        connectStat = (TextView) findViewById(R.id.connection_status);
 
     }
 
@@ -34,6 +38,7 @@ public class NetworkInfoActivity extends AppCompatActivity {
     private boolean isConnectionFast(int type, int subType, Context context){
         if(type == ConnectivityManager.TYPE_WIFI){
             return true;
+
         } else if(type == ConnectivityManager.TYPE_MOBILE){
 
             switch(subType){
@@ -78,6 +83,7 @@ public class NetworkInfoActivity extends AppCompatActivity {
         } else {
             return false;
         }
+
     }
 
     private void checkNetworkType(){
@@ -85,7 +91,12 @@ public class NetworkInfoActivity extends AppCompatActivity {
         connectionStatus = isConnectedFast(getApplicationContext());
         if(!connectionStatus){
 
+            // connection is slow
+            connectStat.setText(getResources().getString(R.string.slow_connection));
+
         } else {
+            // connection is fast
+            connectStat.setText(getResources().getString(R.string.fast_connection));
 
         }
 
