@@ -10,6 +10,7 @@
     <string name="kilobyte_per_sec">Kb per sec:</string>
     <string name="download_speed">Download Speed:</string>
     <string name="file_size">File size in kb:</string>
-    <string name="fast_connection">FAST</string>
-    <string name="slow_connection">SLOW</string>
+    <string name="poor_bandwidth">POOR</string>
+    <string name="average_bandwidth">AVERAGE</string>
+    <string name="good_bandwidth">GOOD</string>
 </resources>

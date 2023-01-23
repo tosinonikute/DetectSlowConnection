@@ -56,7 +56,7 @@ public class FacebookConnectActivity extends AppCompatActivity {
     public void checkNetworkQuality(){
 
         Request request = new Request.Builder()
-                .url("IMAGE_URL_HERE")
+                .url("IMAGE_URL_HERE") // replace image url
                 .build();
 
         mRunningBar.setVisibility(View.VISIBLE);

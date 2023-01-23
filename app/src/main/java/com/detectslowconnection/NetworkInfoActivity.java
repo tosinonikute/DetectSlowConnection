@@ -92,11 +92,11 @@ public class NetworkInfoActivity extends AppCompatActivity {
         if(!connectionStatus){
 
             // connection is slow
-            connectStat.setText(getResources().getString(R.string.slow_connection));
+            connectStat.setText(getResources().getString(R.string.poor_bandwidth));
 
         } else {
             // connection is fast
-            connectStat.setText(getResources().getString(R.string.fast_connection));
+            connectStat.setText(getResources().getString(R.string.good_bandwidth));
 
         }
 

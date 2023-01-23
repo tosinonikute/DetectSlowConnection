@@ -30,9 +30,13 @@ public class DownloadInfoActivity extends AppCompatActivity {
     private long startTime;
     private long endTime;
     private long fileSize;
-    private double  minimumSecs = 4;
     private View mRunningBar;
-    private TextView timeTaken, kbPerSec, downloadSpeed, fSize;
+    private TextView timeTaken, kbPerSec, downloadSpeed, fSize, bandwidthType;
+
+    // Bandwidth range in kbps copied from FBConnect Class
+    private int POOR_BANDWIDTH = 150;
+    private int AVERAGE_BANDWIDTH = 550;
+    private int GOOD_BANDWIDTH = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +50,18 @@ public class DownloadInfoActivity extends AppCompatActivity {
         kbPerSec = (TextView) findViewById(R.id.kilobyte_per_sec);
         downloadSpeed = (TextView) findViewById(R.id.download_speed);
         fSize = (TextView) findViewById(R.id.file_size);
+        bandwidthType = (TextView) findViewById(R.id.bandwidth_type);
 
     }
 
     private void downloadInfo(){
 
         Request request = new Request.Builder()
-                .url("IMAGE_URL_HERE")
+                .url("IMAGE_URL_HERE") // replace image url
                 .build();
 
         mRunningBar.setVisibility(View.VISIBLE);
+        bandwidthType.setText("");
         startTime = System.currentTimeMillis();
 
         client.newCall(request).enqueue(new Callback() {
@@ -95,13 +101,7 @@ public class DownloadInfoActivity extends AppCompatActivity {
 
                 final double timeTakenMills = Math.floor(endTime - startTime);  // time taken in milliseconds
                 final double timeTakenInSecs = timeTakenMills / 1000;  // divide by 1000 to get time in seconds
-                final double kilobytePerSec = Math.round(1024 / timeTakenInSecs);
-
-                if(timeTakenInSecs > minimumSecs){
-                    // slow connection
-                }
-
-                // get the download speed by dividing the file size by time taken to download
+                final int kilobytePerSec = (int) Math.round(1024 / timeTakenInSecs);
                 final double speed = Math.round(fileSize / timeTakenMills);
 
                 Log.d(TAG, "Time taken in secs: " + timeTakenInSecs);
@@ -114,11 +114,26 @@ public class DownloadInfoActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mRunningBar.setVisibility(View.GONE);
                         timeTaken.setText(getResources().getString(R.string.time_taken) + " " + String.valueOf(timeTakenInSecs));
                         kbPerSec.setText(getResources().getString(R.string.kilobyte_per_sec) + " " + String.valueOf(kilobytePerSec));
                         downloadSpeed.setText(getResources().getString(R.string.download_speed) + " " + String.valueOf(speed));
                         fSize.setText(getResources().getString(R.string.file_size) + " " + String.valueOf(fileSize));
-                        mRunningBar.setVisibility(View.GONE);
+
+                        if(kilobytePerSec <= POOR_BANDWIDTH){
+                            // slow connection
+                            bandwidthType.setText(getResources().getString(R.string.poor_bandwidth));
+
+                        } else if (kilobytePerSec > POOR_BANDWIDTH && kilobytePerSec <= AVERAGE_BANDWIDTH){
+                            // Average connection
+                            bandwidthType.setText(getResources().getString(R.string.average_bandwidth));
+
+                        } else if (kilobytePerSec > AVERAGE_BANDWIDTH && kilobytePerSec <= GOOD_BANDWIDTH){
+                            // Fast connection
+                            bandwidthType.setText(getResources().getString(R.string.good_bandwidth));
+
+                        }
+
                     }
                 });
 
