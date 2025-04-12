@@ -9,8 +9,12 @@
 
 - Connection library provides different connection qualities
 
-**_POOR_**  _Bandwidth under_ _150_ kbps.
-**MODERATE**  Bandwidth between 150 and 550 kbps.  
+**POOR** Bandwidth under 150 kbps.
+
+**MODERATE** Bandwidth between 150 and 550 kbps.  
+
 **GOOD** Bandwidth over 2000 kbps.  
-**_EXCELLENT_** Bandwidth over 2000 kbps.  
-**_UNKNOWN_** connection quality cannot be found.
+
+**EXCELLENT** Bandwidth over 2000 kbps.  
+
+**UNKNOWN** connection quality cannot be found.
